@@ -1,0 +1,167 @@
+/*====================================Common Do's===============*/
+.no-decor{
+    text-decoration: none;   
+   color: white;
+   }
+
+.fullwidth{
+    width: 100%;
+}
+
+.viewportheight{
+    height: 100vh;
+}
+
+.topzindex{
+z-index: 1000;
+}
+
+.container-main{
+    width: 100%;
+}
+
+.transparent-bg{
+    background-color: #082829; 
+backdrop-filter: blur(10px); 
+}
+
+.text-limited {
+    overflow: hidden;             /* Hides overflow content */
+    text-overflow: ellipsis;     /* Adds ellipsis (...) for overflowed text */
+}
+/****************************LOG IN PAGE n CREATE ACCOUNT*****************************/
+.container-login-main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100vh;
+  background-color: #263d66;
+}
+
+.section-main {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 500px;
+  height: auto;
+  text-align: center;
+  background: white;
+  padding: 20px;
+  border-color: blue;
+}
+.clearfix {
+  display: block; /* Ensure the link is a block element */
+  margin-top: 10px; /* Add space above the link */
+  text-align: center; /* Center the link */
+}
+
+.login-form{
+background: #173738;
+}
+
+.logo-img {
+  width: 180px;
+  height: 160px;
+  border-radius: 50%;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  margin-bottom: 20px;
+}
+
+.login-button{
+width: 100%;
+margin-bottom: 15px;
+}
+
+.footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding: 10px;
+}
+
+.footer-help {
+  display: flex;
+  gap: 100px;
+  text-align: center;
+}
+
+/****************TOP************LOG IN PAGE n CREATE ACCOUNT*****************************/
+
+/******************************HEADER N FOOTER**************************************/
+.header-main{
+    position:fixed;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 62px;
+
+}
+
+.footer-main{
+    left: 0;
+    right: 0;
+    width: 100%;
+    margin-top: auto;
+}
+
+.footer-copy{
+    text-align: left;
+}
+
+.logoheader{
+text-decoration: none;
+color: white;
+font-weight: bolder;
+font-size: x-large;
+}
+
+
+.create-post-btn{
+    font-size: 12px ;
+    font-weight: bold;
+    margin-bottom: px;
+}
+
+.header-body-gap{
+height: 62px;
+}
+/*============================================Main==============*/
+
+main{
+    background-color: #263d66;
+    min-height: calc(100vh-62px);
+
+}
+
+.carousel-item.active,
+.carousel-item-next,
+.carousel-item-prev{
+    display:block;
+}
+
+/*==============================================HomePage===============*/
+
+.container-carousel-main{
+    height: 200px;
+
+}
+
+/*======================================createpost=========*/
+.post-input-form{
+    background-color:  #263d66;;
+}
+
+.content-input-createpost{
+    height: 500px; /* Height of the textarea */
+    font-size: 18px; /* Larger font size */
+    padding: 10px; /* Padding for better spacing */
+    resize: none; /
+}
+
+.highlight {
+    background-color: yellow; /* Change to your desired color */
+    color: black; /* Optional: Change text color */
+    font-weight: bold; /* Optional: Make text bold */
+}

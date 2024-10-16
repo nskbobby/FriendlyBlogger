@@ -1,0 +1,54 @@
+<%-include("../partials/header.ejs")%>
+
+<div class="container-main home-main text-wrap text-break " >
+
+    <div class="container-carousel-main text-light transparent-bg text-limited"  >
+        
+        <div id="carouselContent" class="carousel slide" data-bs-ride="carousel" >
+            <div class="carousel-inner" role="listbox">
+                <% recentblogs.forEach(function(blog, index) { %>    
+                    <div class="carousel-item <%= index === 0 ? 'active' : '' %> text-center p-4">
+                        <a href="/blogs/<%=blog.blogid%>" class="no-decor">
+                        <h5><%= blog.blogheading %></h5>
+                      <p>
+                        <%= blog.blogcontent.length > 200 ? blog.blogcontent.substring(0, 200) + '...' : blog.blogcontent %>
+                      </p>
+                      <small>Posted by <%= blog.username %> </small>
+                    </a>
+                    </div>
+                  <% }); %>
+
+                  
+            </div>
+        </div>
+    </div>
+
+
+    <div class="conteiner-allposts pt-2 px-2">
+        <div class="input-group mb-1">
+            <span for="searchablog" class="input-group-text">Search a Blog</span>
+            <input type="text" class="form-control" aria-label="searchablog">
+          </div>
+
+ <ul class="allposts-list list-group">
+ <% allblogs.slice().reverse().forEach(function(blog) { %>
+    <li class="list-group-item">
+        <a href="/blogs/<%=blog.blogid%>" class="no-decor text-dark">
+        <h5><%= blog.blogheading %></h5>
+      <p>
+        <%= blog.blogcontent.length > 390 ? blog.blogcontent.substring(0, 390) + '...' : blog.blogcontent %>
+      </p>
+      <small>Posted by <%= blog.username %> | <%= blog.postedtime %></small>
+      </a>
+    </li>
+  <% }); %>
+
+
+    </ul> 
+    </div>
+</div>
+
+
+
+<%-include("../partials/footer.ejs")%>
+

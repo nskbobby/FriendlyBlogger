@@ -1,0 +1,21 @@
+{
+  "name": "friendlybloggerproject",
+  "version": "1.0.0",
+  "description": "A blog website for likemates",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Krishna",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.20.3",
+    "ejs": "^3.1.10",
+    "express": "^4.21.1",
+    "express-session": "^1.18.1",
+    "nodemon": "^3.1.7",
+    "path": "^0.12.7",
+    "url": "^0.11.4"
+  }
+}

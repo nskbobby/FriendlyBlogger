@@ -1,0 +1,50 @@
+<%-include('../partials/header.ejs')%>
+
+<div class="container-main-createpost py-2 px-3  ">
+    <h1 class="text-secondary mb-3">Community Discussions</h1>
+
+    <!-- Discussion Section -->
+    <div class="discussion-section text-light">
+        <h2>Start a Discussion</h2>
+        <form>
+            <div class="form-group">
+                <label for="discussionTitle">Discussion Title</label>
+                <input type="text" class="form-control" id="discussionTitle" placeholder="Enter title">
+            </div>
+            <div class="form-group">
+                <label for="discussionContent">Discussion Content</label>
+                <textarea class="form-control" id="discussionContent" rows="4" placeholder="Write your discussion here..."></textarea>
+            </div>
+            <button type="submit" class="btn btn-dark mt-2">Post Discussion</button>
+        </form>
+    </div>
+
+    <!-- Recent Discussions Section -->
+    <div class="recent-discussions text-light">
+        <h2>Recent Discussions</h2>
+        <ul class="list-group">
+            <li class="list-group-item">
+                <h5 class="mb-1">What are your thoughts on the latest tech trends?</h5>
+                <p class="mb-1">Join the conversation about the evolving landscape of technology and its impact on our daily lives.</p>
+                <small>Posted by User1 | 2 hours ago</small>
+            </li>
+            <li class="list-group-item">
+                <h5 class="mb-1">Best practices for remote work.</h5>
+                <p class="mb-1">Share your tips and tricks for maintaining productivity while working from home.</p>
+                <small>Posted by User2 | 4 hours ago</small>
+            </li>
+            <li class="list-group-item">
+                <h5 class="mb-1">How to stay motivated during tough times.</h5>
+                <p class="mb-1">Discuss strategies to maintain motivation and positivity during challenging periods.</p>
+                <small>Posted by User3 | 1 day ago</small>
+            </li>
+            <li class="list-group-item">
+                <h5 class="mb-1">Travel experiences: Share your stories!</h5>
+                <p class="mb-1">Have you traveled anywhere interesting lately? Share your stories and photos!</p>
+                <small>Posted by User4 | 2 days ago</small>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<%-include('../partials/footer.ejs')%>

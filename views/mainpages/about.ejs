@@ -1,0 +1,22 @@
+<%-include("../partials/header.ejs")%>
+
+
+<form class="pt-2" action="/logout" method="post">
+    <button class="btn btn-dark btn-lg create-post-btn logout-btn" name="logout" >log out</button>
+</form>
+
+<div class="container-account-main text-secondary">
+<h1>Account Details</h1>
+<div class="account-details">
+<h3>Name</h3>
+<h5 class="text-light">Get the name from somewhere</h5>
+<h3>Email</h3>
+<h5 class="text-light">User registerwed email</h5>
+<h3>Password</h3>
+<h5 class="text-light">password of user dotted </h5>
+<a href="/changepassword"><button type="submit" class="btn btn-dark btn-sm mt-3">change password</button></a>
+
+</div>
+</div>
+
+<%-include("../partials/footer.ejs")%>

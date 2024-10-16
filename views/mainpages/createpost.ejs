@@ -1,0 +1,26 @@
+<%-include("../partials/header.ejs")%>
+
+<div class="container-main-createpost py-2 px-3 viewportheight">
+    <div class="container-items d-flex">
+        <form action="/createpost" method="post" class="createpost-form fullwidth">
+        <div class="post-input-form form-group text-light ">
+
+            <div class="post-input-form form-group text-light ">
+            <label for="title" class="form-label ">Enter the title for your blog</label>
+            <input type="text" class="form-control" name="title" placeholder='"when i saw an huge airplane in the sky"' minlength="10" maxlength="150"></input>
+        </div>
+        <div class="post-input-form form-group text-light ">
+            <label for="blogcontent" class="form-label ">So whats on your mind?? Our friends are excited to know</label>
+            <textarea type="text" name="blogcontent" class="form-control content-input-createpost" minlength="300" placeholder='"It was a clear summer afternoon when I first noticed it—a massive aeroplane soaring gracefully across the vibrant blue canvas of............."'></textarea>
+        </div>
+    </div>
+    <div class="d-flex justify-content-center">
+    <button type="submit" class="btn btn-dark btn-lg mt-3"> submit post</button>
+</div>    
+</form>
+
+    </div>
+
+</div>
+
+<%-include("../partials/footer.ejs")%>

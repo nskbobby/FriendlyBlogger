@@ -1,0 +1,27 @@
+<%-include("../partials/header.ejs")%>
+
+
+<div class="container-main-createpost py-2 px-3 viewportheight">
+<h1 class="text-secondary"> Search,View & Delete your articles</h1>
+    <div class="input-group mb-1">
+        <span for="searchuserblog" class="input-group-text">Search Your Blog</span>
+        <input type="text" class="form-control" aria-label="searchuserblog">
+      </div>
+
+<ul class="userposts-list list-group">
+
+    <% userblogs.forEach(function(blog) { %>
+        <li class="list-group-item">
+          <h5><%= blog.blogheading %></h5>
+          <p>
+            <%= blog.blogcontent %>
+          </p>
+          <small>Posted by <%= blog.username %> | <%= blog.postedtime %></small>
+        </li>
+      <% }); %>
+    
+                        </ul>
+                    </div>
+
+
+<%-include("../partials/footer.ejs")%>
