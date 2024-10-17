@@ -1,3 +1,9 @@
+import { fileURLToPath, pathToFileURL } from "url";
+import { dirname } from "path";
+import dotenv from 'dotenv';
+dotenv.config();
+
+const dircName = dirname(fileURLToPath(import.meta.url)); //url to directory path
 export var userpasswordManager = [
   {
     id: 0,
@@ -16,6 +22,7 @@ export var userpasswordManager = [
 
 // verify user
 export function veriyUser(req, res) {
+    console.log(process.env.check);
     let userFound = false; // Flag to track if the user exists
   
     for (var i = 0; i < userpasswordManager.length; i++) {
@@ -30,9 +37,8 @@ export function veriyUser(req, res) {
          req.session.user={
             userid:user.id,
             username:user.username,
-            password:user.password
+            useremail:user.email,
          }
-         console.log(req.session.user);
          return res.redirect('/home'); //return homepage
 
         } else {
@@ -100,3 +106,28 @@ export function CheckUserPresence(req, res) {
     }
   }
 
+export function getuserdetails(){
+for(var i=0;i<userpasswordManager.length;i++){
+    if(userpasswordManager[i].id==process.env.USERID){
+        return userpasswordManager[i];
+    }
+}
+}
+
+
+//Change password
+export function changepassword(req,res){
+var currentpassword=getuserdetails().password;
+
+
+if(req.body.oldpassword===currentpassword){
+    getuserdetails().password=req.body.newpassword;
+    res.render(dircName + "/../views/mainpages/changepassword.ejs",{
+       status:'PASSWORD CHANGED SUCCESSFULLY',
+    });
+}else{
+    res.render(dircName + "/../views/mainpages/changepassword.ejs",{
+        status:'OOPS, TRY AGAIN!! PASSWORDS DIDN"T MATCH',
+});
+}
+}

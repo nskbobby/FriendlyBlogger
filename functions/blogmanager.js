@@ -1,9 +1,18 @@
+import { fileURLToPath, pathToFileURL } from "url";
+import { dirname } from "path";
+import dotenv from 'dotenv';
+dotenv.config();
+
+const dircName = dirname(fileURLToPath(import.meta.url)); //url to directory path
+const loginpageURL = pathToFileURL(dircName + "/loginpage.js");
+const loginpage = await import(loginpageURL);
+
 export var blogdatabase = [
     {
         blogid: 1,
         userid: 1,
         username: "krish",
-        blogheading: "My First Blog",
+        blogheading: "When i saw a plane in the clear sky",
         blogcontent: `It was a clear summer afternoon. It's a beautiful day for the pilots who fly on VFR("Visual Flying Rules") . I came up running on to the roof of my house like everything to sight the airplane when i heard the sound of it's massive engines, But this time it's different. The plane is flying low and it's a private charter with Rolls Royce engine. 
         I saw the pilot and in a glance of seconds he saw me from the cockpit waving hand at me.
          That's when fuel added into my ignited dream inside my heart to become a pilot. I was dancing with the joy as pilot waved at me. I was on cloud 9 because it's a private charter which is expensive.
@@ -96,10 +105,10 @@ export var blogdatabase = [
 //=================================================TEST END==============//
 
 //function to create a post
-export function createpost(req,res,sessiond){
+export function createpost(req,res,){
 
-var currentUserId=sessiond.userid; //user id to store session user
-var currentUserName=sessiond.username;// username to store session user
+var userdetails=loginpage.getuserdetails(process.env.USERID);
+var currentUserName=userdetails.username;// username to store session user
 var blogtitle=req.body.title ? req.body.title.trim() : '';
 var blogcontent=req.body.blogcontent ? req.body.blogcontent.trim() : '';
 const time=new Date;
@@ -107,15 +116,15 @@ const time=new Date;
 
 if(blogtitle && blogcontent){
 var createdBlog={
-    blogid:blogdatabase.length,
-    userid:currentUserId,
+    blogid:(blogdatabase.length+1),
+    userid:process.env.USERID,
     username:currentUserName,
     blogheading:blogtitle,
     blogcontent:blogcontent,
     postedtime:time,
 } 
 blogdatabase.push(createdBlog); //add posted blog to database
-console.log("successfully posted" +JSON.stringify(createdBlog));
+console.log("successfully posted");
 res.redirect(`/blogs/${createdBlog.blogid}`);
 }else{
     console.log(`empty content. Enter your content `)
@@ -125,10 +134,10 @@ res.redirect(`/blogs/${createdBlog.blogid}`);
 
 
 
-export function getuserblogs(userid){
+export function getuserblogs(){
     var userblogs=[];
 for(var i=0;i<blogdatabase.length;i++){
-if(blogdatabase[i].userid==userid){
+if(blogdatabase[i].userid==process.env.USERID){
     userblogs.push(blogdatabase[i]);
 }
 }
@@ -153,7 +162,7 @@ return recentblogs;
 
 
 export function getblog(blogId){
-    console.log("in bmanager page id is "+blogId);
+    
     for( var i=0;i<blogdatabase.length;i++){
         if(blogdatabase[i].blogid==blogId){
             return blogdatabase[i];

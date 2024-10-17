@@ -3,7 +3,8 @@ import express from "express";
 import { fileURLToPath, pathToFileURL } from "url";
 import { dirname } from "path";
 import  session  from "express-session";
-
+import dotenv from "dotenv";
+dotenv.config();
 
 // Variables n constants
 const dircName = dirname(fileURLToPath(import.meta.url)); //url to directory path
@@ -12,7 +13,7 @@ const loginpageURL = pathToFileURL(dircName + "/functions/loginpage.js");
 const loginpage = await import(loginpageURL);
 const bmURL=pathToFileURL(dircName + "/functions/blogmanager.js");
 const blogmanager = await import(bmURL);
-var sessiond;
+
 
 
 
@@ -26,23 +27,38 @@ app.use(express.json());
 app.use(express.static(dircName + "/public"));
 
 
+
 //===================session setup
 app.use(session({
-    secret:'krishna',
+    secret:process.env.SESSION_SECRET ,
     resave: false,
     saveUninitialized:true,
-    cookie:{secure:false}
+    cookie:{secure:false,
+        maxAge:0.15 * 60 * 60 * 1000,
+    }
 }));
+
+app.use((req, res, next) => {
+    if (req.session) {
+        const remainingTime = req.session.cookie.maxAge; // Session remaining time in milliseconds
+        console.log(`Session age remaining: ${remainingTime / 1000} seconds`);
+
+        req.session.cookie.maxAge = 0.15 * 60 * 60 * 1000; // Refresh session expiration
+
+        console.log(" refreshed session to "+(req.session.cookie.maxAge)/1000);
+    }
+    next();
+});
 
 export const isAuthenticated=(req,res,next)=>{
 
     if(req.session && req.session.user){
         console.log("user is authenticated");
-        sessiond={
-            userid:req.session.user.userid,
-            username:req.session.user.username,
-        }
-        console.log(sessiond);
+        
+            process.env.USERID=req.session.user.userid;
+            process.env.USERNAME=req.session.user.username;
+            process.env.USEREMAIL=req.session.user.useremail;
+
         return next();
     }else{
         console.log("user is not authenticated");
@@ -62,7 +78,7 @@ app.post("/login", (req, res) => {
 
 //createpost post
 app.post('/createpost',isAuthenticated,(req,res)=>{
- blogmanager.createpost(req,res,sessiond);
+ blogmanager.createpost(req,res);
 });
 
 //=================================creates account post====
@@ -84,11 +100,15 @@ app.post("/logout",(req,res)=>{
 
 });
 
+//Change password post
+app.post('/changepassword',isAuthenticated,(req,res)=>{
+    loginpage.changepassword(req,res);
+})
 //========ALL GET ROUTES===========================================
 
 //route to Home
 app.get("/home",isAuthenticated, (req, res) => {
-    var userblogs=blogmanager.getuserblogs(sessiond.userid);
+    var userblogs=blogmanager.getuserblogs();
     var recentblogs=blogmanager.getrecentblogs();
     var allblogs=blogmanager.blogdatabase;
     res.render(dircName + "/views/mainpages//homepage.ejs",{
@@ -116,18 +136,24 @@ app.get("/createpost",isAuthenticated, (req, res) => {
 
 
 //about route
-app.get("/about",isAuthenticated, (req, res) => {
-    res.render(dircName + "/views/mainpages/about.ejs");
+app.get("/account",isAuthenticated, (req, res) => {
+    res.render(dircName + "/views/mainpages/account.ejs",{
+        username:process.env.USERNAME,
+        useremail:process.env.USEREMAIL,
+        password:'***********',
+    });
     });
 
 //changepassword route
 app.get("/changepassword",isAuthenticated,(req, res) => {
-    res.render(dircName + "/views/mainpages/changepassword.ejs");
+    res.render(dircName + "/views/mainpages/changepassword.ejs",{
+        status:"CHANGE PASSWORD",
+    });
     });
 
 //myarticles route
 app.get("/myarticlespage",isAuthenticated, (req, res) => {
-    var userblogs=blogmanager.getuserblogs(sessiond.userid);
+    var userblogs=blogmanager.getuserblogs();
     res.render(dircName + "/views/mainpages/myarticlespage.ejs",{
         userblogs:userblogs,
     });
@@ -142,7 +168,6 @@ app.get("/communitypage",isAuthenticated, (req, res) => {
 // Example route for serving the blog details
 app.get('/blogs/:id',isAuthenticated, (req, res) => {
     const blogId = req.params.id;
-    console.log("id is"+blogId);
     var blog = blogmanager.getblog(blogId);
     res.render(dircName + "/views/mainpages/blogpage.ejs",{
         blog:blog,
