@@ -40,12 +40,7 @@ app.use(session({
 
 app.use((req, res, next) => {
     if (req.session) {
-        const remainingTime = req.session.cookie.maxAge; // Session remaining time in milliseconds
-        console.log(`Session age remaining: ${remainingTime / 1000} seconds`);
-
         req.session.cookie.maxAge = 0.15 * 60 * 60 * 1000; // Refresh session expiration
-
-        console.log(" refreshed session to "+(req.session.cookie.maxAge)/1000);
     }
     next();
 });
@@ -73,7 +68,7 @@ export const isAuthenticated=(req,res,next)=>{
 
 //log in page post
 app.post("/login", (req, res) => {
-  loginpage.veriyUser(req, res);
+  loginpage.verifyUser(req, res);
 });
 
 //createpost post
@@ -104,6 +99,20 @@ app.post("/logout",(req,res)=>{
 app.post('/changepassword',isAuthenticated,(req,res)=>{
     loginpage.changepassword(req,res);
 })
+
+//password reset forgot password
+app.post('/passwordreset', (req, res) => {
+    loginpage.passwordreset(req, res);
+});
+
+//delete blog
+app.post('/deleteblog/:id',(req,res)=>{
+    const blogId = req.params.id;
+    blogmanager.deleteBlog(res,blogId);
+
+});
+
+
 //========ALL GET ROUTES===========================================
 
 //route to Home
@@ -191,7 +200,18 @@ app.get("/terms-of-service",isAuthenticated, (req, res) => {
     res.render(dircName + "/views/mainpages/termsofservice.ejs");
     });
 
-    
+//about route
+app.get("/about",isAuthenticated, (req, res) => {
+    res.render(dircName + "/views/mainpages/about.ejs");
+    });
+
+//about forgotpassword
+app.get("/forgotpassword", (req, res) => {
+    res.render(dircName + "/views/mainpages/forgotpassword.ejs",{
+        status:null,
+    });
+    });
+
 //=====================================PORT LISTNER==================================================
 //port listner
 app.listen(app_server, () => {

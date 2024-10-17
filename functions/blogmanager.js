@@ -116,7 +116,7 @@ const time=new Date;
 
 if(blogtitle && blogcontent){
 var createdBlog={
-    blogid:(blogdatabase.length+1),
+    blogid:blogdatabase.length+1,
     userid:process.env.USERID,
     username:currentUserName,
     blogheading:blogtitle,
@@ -162,10 +162,27 @@ return recentblogs;
 
 
 export function getblog(blogId){
-    
+
     for( var i=0;i<blogdatabase.length;i++){
         if(blogdatabase[i].blogid==blogId){
             return blogdatabase[i];
         }
+    }
+}
+
+export function deleteBlog(res,blogid) {
+    // Find the index of the blog with the given blogid
+    const blogIndex = toString(blogdatabase.findIndex(blog => {
+           return blog.blogid === blogid;
+    }));
+    // Check if the blog was found
+    if (blogIndex !== -1) {
+        // Remove the blog from the array
+        blogdatabase.splice(blogIndex, 1);
+        console.log(`Blog with ID ${blogid} has been deleted.`);
+        return res.redirect('/myarticlespage');
+    } else {
+        console.log(`Blog with ID ${blogid} not found.`);
+        return res.redirect('/myarticlespage');
     }
 }

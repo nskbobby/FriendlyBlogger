@@ -1,27 +1,40 @@
-<%-include("../partials/header.ejs")%>
+<%- include("../partials/header.ejs") %>
 
+<div class="container-main py-2 px-3 min-vh-100">
+    <h1 class="text-secondary">Search, View & Delete your articles</h1>
 
-<div class="container-main-createpost py-2 px-3 viewportheight">
-<h1 class="text-secondary"> Search,View & Delete your articles</h1>
-    <div class="input-group mb-1">
-        <span for="searchuserblog" class="input-group-text">Search Your Blog</span>
-        <input type="text" class="form-control" aria-label="searchuserblog">
-      </div>
+    <div class="container-userblogs pt-2 px-2">
+       
+        <ul class="userblogs-list list-group">
+            <% if (userblogs.length === 0) { %>
+                <li class="list-group-item text-center">
+                    <h1 class="text-secondary">It's time to share something you feel</h1>
+                </li>
+            <% } else { %>
 
-<ul class="userposts-list list-group">
+                <div class="input-group mb-1">
+                    <span for="searchablog" class="input-group-text">Search a Blog</span>
+                    <input type="text" class="form-control" aria-label="searchablog">
+                </div>
+                
+                <% userblogs.slice().reverse().forEach(function(blog) { %>
+                    <li class="list-group-item">
+                        <a href="/blogs/<%= blog.blogid %>" class="no-decor text-dark">
+                            <h5><%= blog.blogheading %></h5>
+                            <p>
+                                <%= blog.blogcontent.length > 390 ? blog.blogcontent.substring(0, 390) + '...' : blog.blogcontent %>
+                            </p>
+                            <small>Posted by <%= blog.username %> | <%= blog.postedtime %>
+                                <form action="/deleteblog/<%= blog.blogid %>" method="POST" class="text-end" style="margin-top: 10px;">
+                                    <button type="submit" class="text-danger small" style="border: none; background: none; padding: 0;">Delete</button>
+                                </form>
+                            </small>
+                        </a>
+                    </li>
+                <% }); %>
+            <% } %>
+        </ul>
+    </div>
+</div>
 
-    <% userblogs.forEach(function(blog) { %>
-        <li class="list-group-item">
-          <h5><%= blog.blogheading %></h5>
-          <p>
-            <%= blog.blogcontent %>
-          </p>
-          <small>Posted by <%= blog.username %> | <%= blog.postedtime %></small>
-        </li>
-      <% }); %>
-    
-                        </ul>
-                    </div>
-
-
-<%-include("../partials/footer.ejs")%>
+<%- include("../partials/footer.ejs") %>
