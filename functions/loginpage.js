@@ -73,9 +73,9 @@ export function CheckUserPresence(req, res) {
       req.body.email === userpasswordManager[i].email ||
       req.body.username === userpasswordManager[i].username
     ) {
-        console.log("already existing user " + JSON.stringify(req.body));
+        console.log("already existing user " + JSON.stringify(req.body.useremail));
         res.locals.usercreated = false;
-        res.redirect("/");
+       return res.redirect("/");
      
     } 
   }
@@ -91,12 +91,13 @@ export function CheckUserPresence(req, res) {
       userpasswordManager.push(newUser);
 
       res.locals.usercreated = true;
-      res.redirect("/");
+      return res.redirect("/");
     } else {
       res.locals.usercreated = false;
       console.log(
         `Passwords didn't match ${req.body.password} , ${req.body["confirm-password"]}`
       );
+      return res.redirect('/createaccount');
     }
 
     if (!res.locals.usercreated) {

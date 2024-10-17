@@ -8,7 +8,7 @@ dotenv.config();
 
 // Variables n constants
 const dircName = dirname(fileURLToPath(import.meta.url)); //url to directory path
-const app_server = 3000; //Port the server is running
+const app_server = process.env.PORT || 3000; //Port the server is running
 const loginpageURL = pathToFileURL(dircName + "/functions/loginpage.js");
 const loginpage = await import(loginpageURL);
 const bmURL=pathToFileURL(dircName + "/functions/blogmanager.js");
