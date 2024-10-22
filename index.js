@@ -48,7 +48,6 @@ app.use((req, res, next) => {
 export const isAuthenticated=(req,res,next)=>{
 
     if(req.session && req.session.user){
-        console.log("user is authenticated");
         
             process.env.USERID=req.session.user.userid;
             process.env.USERNAME=req.session.user.username;
