@@ -107,6 +107,7 @@ app.post('/passwordreset', (req, res) => {
 //delete blog
 app.post('/deleteblog/:id',(req,res)=>{
     const blogId = req.params.id;
+    console.log("this is clicked" +blogId);
     blogmanager.deleteBlog(res,blogId);
 
 });
@@ -117,11 +118,11 @@ app.post('/deleteblog/:id',(req,res)=>{
 //route to Home
 app.get("/home",isAuthenticated, (req, res) => {
     var userblogs=blogmanager.getuserblogs();
-    var recentblogs=blogmanager.getrecentblogs();
+    var randomblogs=blogmanager.getrandomblogs();
     var allblogs=blogmanager.blogdatabase;
     res.render(dircName + "/views/mainpages//homepage.ejs",{
         userblogs:userblogs,
-        recentblogs:recentblogs,
+        randomblogs:randomblogs,
         allblogs:allblogs,
     });
   });
@@ -160,8 +161,8 @@ app.get("/changepassword",isAuthenticated,(req, res) => {
     });
 
 //myarticles route
-app.get("/myarticlespage",isAuthenticated, (req, res) => {
-    var userblogs=blogmanager.getuserblogs();
+app.get("/myarticlespage",isAuthenticated,async(req, res) => {
+    var userblogs=await blogmanager.getuserblogs();
     res.render(dircName + "/views/mainpages/myarticlespage.ejs",{
         userblogs:userblogs,
     });
@@ -173,7 +174,6 @@ app.get("/communitypage",isAuthenticated, (req, res) => {
     });
 
 //blog link route
-// Example route for serving the blog details
 app.get('/blogs/:id',isAuthenticated, (req, res) => {
     const blogId = req.params.id;
     var blog = blogmanager.getblog(blogId);

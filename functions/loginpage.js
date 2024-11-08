@@ -1,9 +1,10 @@
-import { fileURLToPath, pathToFileURL } from "url";
+import { fileURLToPath } from "url";
 import { dirname } from "path";
-import dotenv from 'dotenv';
+import dotenv from "dotenv";
 dotenv.config();
 
-const dircName = dirname(fileURLToPath(import.meta.url)); //url to directory path
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
 export var userpasswordManager = [
   {
     id: 1,
@@ -13,152 +14,141 @@ export var userpasswordManager = [
   },
 ];
 
-
-// verify user
-export function verifyUser(req, res) {
-    console.log(process.env.check);
-    let userFound = false; // Flag to track if the user exists
-
-    const inputEmail = req.body.username ;
-    const inputUsername = req.body.username ;
-    const inputPassword = req.body.password ;
-
-    // Loop through the userpasswordManager array
-    for (var i = 0; i < userpasswordManager.length; i++) {
-        const user = userpasswordManager[i];
-
-        // Normalize email and username (trim and lowercase)
-        const storedEmail = user.email.trim().toLowerCase();
-        const storedUsername = user.username.trim().toLowerCase();
-        // Check if the email or username matches
-        if (inputEmail === storedEmail || inputUsername === storedUsername) {
-            userFound = true; // User was found
-
-            // Check if the password matches
-            if (inputPassword === user.password.trim()) {
-                console.log("Password matches, logging in...");
-                req.session.user = {
-                    userid: user.id,
-                    username: user.username,
-                    useremail: user.email,
-                };
-                return res.redirect('/home'); // Redirect to homepage
-            } else {
-                console.log(
-                    "Password didn't match. Try again and enter the correct password!! " +
-                    JSON.stringify(req.body)
-                );
-                return res.redirect('/');
-            }
-        }
-    }
-
-    // If no matching user was found
-    if (!userFound) {
-        console.log("User not found.");
-        return res.redirect('/');
-    }
-}
-
-
-
-export function deleteUser(email) {
-  userpasswordManager = userpasswordManager.filter(
-    (user) => user.email !== email
-  );
-}
-
-//CheckUserNcreate
-export function CheckUserPresence(req, res) {
-  for (var i = 0; i < userpasswordManager.length; i++) {
-    if (
-      req.body.email === userpasswordManager[i].email ||
-      req.body.username === userpasswordManager[i].username
-    ) {
-        console.log("already existing user " + JSON.stringify(req.body.useremail));
-        res.locals.usercreated = false;
-       return res.redirect("/");
-     
-    } 
+// User Service Class
+class UserService {
+  constructor(userDatabase) {
+    this.userDatabase = userDatabase;
   }
 
-    if (req.body.password === req.body["confirm-password"]) {
-      const newUser = {
-        id: userpasswordManager.length,
-        email: req.body.email,
-        username: req.body.username,
-        password: req.body.password,
-      };
+  findUserByEmailOrUsername(email, username) {
+    return this.userDatabase.find(
+      (user) =>
+        user.email.toLowerCase() === email.toLowerCase() ||
+        user.username.toLowerCase() === username.toLowerCase()
+    );
+  }
 
-      userpasswordManager.push(newUser);
+  getUserById(userId) {
+    return this.userDatabase.find((user) => user.id == userId);
+  }
 
+  addUser(email, username, password) {
+    const newUser = {
+      id: this.userDatabase.length + 1,
+      email: email,
+      username: username,
+      password: password, // Add hashing in production
+    };
+    this.userDatabase.push(newUser);
+    return newUser;
+  }
+
+  updateUserPassword(userId, newPassword) {
+    const user = this.getUserById(userId);
+    if (user) {
+      user.password = newPassword; // Add hashing in production
+      return true;
+    }
+    return false;
+  }
+
+  deleteUserByEmail(email) {
+    this.userDatabase = this.userDatabase.filter((user) => user.email !== email);
+  }
+}
+
+const userService = new UserService(userpasswordManager);
+
+// AuthController Class for handling authentication and authorization
+class AuthController {
+  verifyUser(req, res) {
+    const { username, password } = req.body;
+    const user = userService.findUserByEmailOrUsername(username, username);
+
+    if (user) {
+      if (user.password === password.trim()) {
+        console.log("Login successful!");
+        req.session.user = {
+          userid: user.id,
+          username: user.username,
+          useremail: user.email,
+        };
+        return res.redirect("/home");
+      } else {
+        console.log("Incorrect password!");
+        return res.redirect("/");
+      }
+    } else {
+      console.log("User not found.");
+      return res.redirect("/");
+    }
+  }
+
+  CheckUserPresence(req, res) {
+    const { email, username, password, "confirm-password": confirmPassword } = req.body;
+
+    if (userService.findUserByEmailOrUsername(email, username)) {
+      console.log("User already exists!");
+      res.locals.usercreated = false;
+      return res.redirect("/");
+    }
+
+    if (password === confirmPassword) {
+      userService.addUser(email, username, password);
       res.locals.usercreated = true;
+      console.log("User created successfully.");
       return res.redirect("/");
     } else {
-      res.locals.usercreated = false;
-      console.log(
-        `Passwords didn't match ${req.body.password} , ${req.body["confirm-password"]}`
-      );
-      return res.redirect('/createaccount');
+      console.log("Passwords do not match.");
+      return res.redirect("/createaccount");
     }
+  }
+}
 
-    if (!res.locals.usercreated) {
-      console.log("couldn't create user. Please try again");
+const authController = new AuthController();
+
+// PasswordManager Class for handling password changes and resets
+class PasswordManager {
+  changepassword(req, res) {
+    const userId = process.env.USERID;
+    const currentUser = userService.getUserById(userId);
+    const { oldpassword, newpassword } = req.body;
+
+    if (currentUser && currentUser.password === oldpassword) {
+      userService.updateUserPassword(userId, newpassword);
+      res.render(`${__dirname}/../views/mainpages/changepassword.ejs`, {
+        status: "PASSWORD CHANGED SUCCESSFULLY",
+      });
     } else {
-      console.log("user created " + JSON.stringify(userpasswordManager));
+      res.render(`${__dirname}/../views/mainpages/changepassword.ejs`, {
+        status: "OOPS, TRY AGAIN!! PASSWORDS DIDN'T MATCH",
+      });
     }
   }
 
-export function getuserdetails(){
-for(var i=0;i<userpasswordManager.length;i++){
-    if(userpasswordManager[i].id==process.env.USERID){
-        return userpasswordManager[i];
-    }
-}
-}
+  passwordreset(req, res) {
+    const { useremail, newpassword } = req.body;
+    const user = userService.findUserByEmailOrUsername(useremail, "");
 
-
-//Change password
-export function changepassword(req,res){
-var currentpassword=getuserdetails().password;
-if(req.body.oldpassword===currentpassword){
-    getuserdetails().password=req.body.newpassword;
-    res.render(dircName + "/../views/mainpages/changepassword.ejs",{
-       status:'PASSWORD CHANGED SUCCESSFULLY',
-    });
-}else{
-    res.render(dircName + "/../views/mainpages/changepassword.ejs",{
-        status:'OOPS, TRY AGAIN!! PASSWORDS DIDN"T MATCH',
-});
-}
-}
-
-
-
-// forgot password reset
-export function passwordreset(req, res) {
-    var currentuser;
-    let found = false;
-    
-    for (var i = 0; i < userpasswordManager.length; i++) {
-        if (userpasswordManager[i].email == req.body.useremail) {
-            found = true;
-            if (req.body.newpassword) {
-                userpasswordManager[i].password = req.body.newpassword;
-                return res.render(dircName + "/../views/mainpages/forgotpassword.ejs", {
-                    status: 'PASSWORD CHANGED SUCCESSFULLY',
-                });
-            }
-        }
-    }
-
-    if (!found) {
-        res.render(dircName + "/../views/mainpages/forgotpassword.ejs", {
-            status: 'OOPS, TRY AGAIN!! EMAIL DIDN\'T MATCH',
-        });
+    if (user && newpassword) {
+      user.password = newpassword; // Add hashing in production
+      res.render(`${__dirname}/../views/mainpages/forgotpassword.ejs`, {
+        status: "PASSWORD CHANGED SUCCESSFULLY",
+      });
     } else {
-        res.render(dircName + "/../views/mainpages/forgotpassword.ejs", {
-            status: ''
-        });
+      res.render(`${__dirname}/../views/mainpages/forgotpassword.ejs`, {
+        status: "OOPS, TRY AGAIN!! EMAIL DIDN'T MATCH",
+      });
     }
+  }
 }
+
+const passwordManager = new PasswordManager();
+
+// Exporting functions with original names
+export const verifyUser = authController.verifyUser.bind(authController);
+export const CheckUserPresence = authController.CheckUserPresence.bind(authController);
+export const deleteUser = (email) => userService.deleteUserByEmail(email);
+export const changepassword = passwordManager.changepassword.bind(passwordManager);
+export const passwordreset = passwordManager.passwordreset.bind(passwordManager);
+export const getuserdetails = userService.getUserById.bind(userService);

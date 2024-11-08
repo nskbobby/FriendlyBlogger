@@ -147,14 +147,14 @@ return userblogs;
 }
 
 
-export function getrecentblogs(){
+export function getrandomblogs(){
 var count=5;
 var recentblogs=[];
 var length=blogdatabase.length;
 while(count>0){
-    recentblogs.push(blogdatabase[length-1]);
+var random=Math.floor(Math.random()*length);
+    recentblogs.push(blogdatabase[random]);
     count--;
-    length--;
 }
 return recentblogs;
 }
@@ -170,19 +170,25 @@ export function getblog(blogId){
     }
 }
 
-export function deleteBlog(res,blogid) {
-    // Find the index of the blog with the given blogid
-    const blogIndex = toString(blogdatabase.findIndex(blog => {
-           return blog.blogid === blogid;
-    }));
-    // Check if the blog was found
-    if (blogIndex !== -1) {
-        // Remove the blog from the array
-        blogdatabase.splice(blogIndex, 1);
-        console.log(`Blog with ID ${blogid} has been deleted.`);
-        return res.redirect('/myarticlespage');
-    } else {
-        console.log(`Blog with ID ${blogid} not found.`);
-        return res.redirect('/myarticlespage');
+export function deleteBlog(res, blogid) {
+    let blogFound = false;
+    // Loop through the array to find and delete the blog
+    for (let i = 0; i < blogdatabase.length; i++) {
+        console.log(blogdatabase[i] +"and "+blogid );
+        if (String(blogdatabase[i].blogid) === String(blogid)) {
+            // Blog found; remove it from the array
+            blogdatabase.splice(i, 1);
+            blogFound = true;
+            console.log(`Blog with ID ${blogid} has been deleted.`);
+            break; // Exit loop after deleting
+        }
     }
+
+    // If the blog was not found, log a message
+    if (!blogFound) {
+        console.log(`Blog with ID ${blogid} not found.`);
+    }
+
+    // Redirect regardless of outcome
+    return res.redirect('/myarticlespage');
 }

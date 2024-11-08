@@ -2,11 +2,19 @@
 
 <div class="container-main home-main text-wrap text-break min-vh-100" >
 
+
+  <% if (allblogs.length === 0) { %>
+    <div class="text-center text-light p-5">
+        <h4>Oops! It seems a bit quiet here...</h4>
+        <p>Why not be the first to share a story or insight? Start a blog post and make this space come alive!</p>
+        <a href="/createpost" class="btn btn-primary mt-3">Create Your First Blog Post!</a>
+    </div>
+<% } else { %>
     <div class="container-carousel-main text-light transparent-bg text-limited"  >
         
         <div id="carouselContent" class="carousel slide" data-bs-ride="carousel" >
             <div class="carousel-inner" role="listbox">
-                <% recentblogs.forEach(function(blog, index) { %>    
+                <% randomblogs.forEach(function(blog, index) { %>    
                     <div class="carousel-item <%= index === 0 ? 'active' : '' %> text-center p-4">
                         <a href="/blogs/<%=blog.blogid%>" class="no-decor">
                         <h5><%= blog.blogheading %></h5>
@@ -46,6 +54,7 @@
 
     </ul> 
     </div>
+    <% } %>
 </div>
 
 
